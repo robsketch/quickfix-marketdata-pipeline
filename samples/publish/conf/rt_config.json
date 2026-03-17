@@ -1,0 +1,5 @@
+{
+  "name": "sample-publisher",
+  "topics": { "insert": "data" },
+  "insert": { "insert": [":127.0.0.1:5000"] }
+}

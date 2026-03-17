@@ -1,0 +1,151 @@
+20260317-20:09:51.242121000 : Created session
+20260317-20:15:22.971922000 : Created session
+20260317-20:15:26.592339000 : Received logon request
+20260317-20:15:26.592515000 : Responding to logon request
+20260317-20:15:26.592523000 : MsgSeqNum too high, expecting 1 but received 32
+20260317-20:15:26.592630000 : Sent ResendRequest FROM: 1 TO: 0
+20260317-20:15:26.593142000 : Received SequenceReset FROM: 1 TO: 33
+20260317-20:15:26.610034000 : ResendRequest for messages FROM: 1 TO: 31 has been satisfied.
+20260317-20:16:54.933568000 : Created session
+20260317-20:16:59.616489000 : Received logon request
+20260317-20:16:59.616616000 : Responding to logon request
+20260317-20:16:59.616623000 : MsgSeqNum too high, expecting 33 but received 345
+20260317-20:16:59.616704000 : Sent ResendRequest FROM: 33 TO: 0
+20260317-20:22:00.173947000 : Created session
+20260317-20:22:03.480776000 : Received logon request
+20260317-20:22:03.480919000 : Responding to logon request
+20260317-20:22:03.480929000 : MsgSeqNum too high, expecting 33 but received 704
+20260317-20:22:03.481055000 : Sent ResendRequest FROM: 33 TO: 0
+20260317-20:22:03.545756000 : Received SequenceReset FROM: 203 TO: 204
+20260317-20:22:03.587263000 : Received SequenceReset FROM: 344 TO: 346
+20260317-20:22:03.636110000 : Received SequenceReset FROM: 506 TO: 507
+20260317-20:22:03.681723000 : Received SequenceReset FROM: 677 TO: 705
+20260317-20:22:03.681750000 : ResendRequest for messages FROM: 33 TO: 703 has been satisfied.
+20260317-20:23:11.176903000 : Socket Error: Connection reset by peer.
+20260317-20:23:11.177012000 : Disconnecting
+20260317-20:30:14.048712000 : Created session
+20260317-20:30:16.955065000 : Received logon request
+20260317-20:30:16.955305000 : Responding to logon request
+20260317-20:30:16.955315000 : MsgSeqNum too high, expecting 1015 but received 1016
+20260317-20:30:16.955424000 : Sent ResendRequest FROM: 1015 TO: 0
+20260317-20:30:16.956515000 : ResendRequest for messages FROM: 1015 TO: 1015 has been satisfied.
+20260317-20:30:16.956551000 : Received SequenceReset FROM: 1015 TO: 1017
+20260317-20:32:09.262479000 : Socket Error: Connection reset by peer.
+20260317-20:32:09.262588000 : Disconnecting
+20260317-20:41:42.504183000 : Created session
+20260317-20:41:45.225949000 : Received logon request
+20260317-20:41:45.226484000 : Responding to logon request
+20260317-20:41:45.226497000 : MsgSeqNum too high, expecting 1537 but received 1538
+20260317-20:41:45.226583000 : Sent ResendRequest FROM: 1537 TO: 0
+20260317-20:41:45.226916000 : ResendRequest for messages FROM: 1537 TO: 1537 has been satisfied.
+20260317-20:41:45.226946000 : Received SequenceReset FROM: 1537 TO: 1539
+20260317-20:43:41.113875000 : Socket Error: Connection reset by peer.
+20260317-20:43:41.113960000 : Disconnecting
+20260317-20:44:05.064947000 : Created session
+20260317-20:44:08.312374000 : Received logon request
+20260317-20:44:08.312507000 : Responding to logon request
+20260317-20:44:08.312516000 : MsgSeqNum too high, expecting 2079 but received 2080
+20260317-20:44:08.312597000 : Sent ResendRequest FROM: 2079 TO: 0
+20260317-20:44:08.312973000 : ResendRequest for messages FROM: 2079 TO: 2079 has been satisfied.
+20260317-20:44:08.313004000 : Received SequenceReset FROM: 2079 TO: 2081
+20260317-20:44:59.992458000 : Socket Error: Connection reset by peer.
+20260317-20:44:59.992579000 : Disconnecting
+20260317-20:45:34.420400000 : Created session
+20260317-20:45:37.876753000 : Received logon request
+20260317-20:45:37.876884000 : Responding to logon request
+20260317-20:45:37.876891000 : MsgSeqNum too high, expecting 2321 but received 2323
+20260317-20:45:37.876973000 : Sent ResendRequest FROM: 2321 TO: 0
+20260317-20:45:37.877260000 : Received SequenceReset FROM: 2321 TO: 2324
+20260317-20:45:37.881512000 : ResendRequest for messages FROM: 2321 TO: 2322 has been satisfied.
+20260317-20:47:30.228826000 : Socket Error: Connection reset by peer.
+20260317-20:47:30.228910000 : Disconnecting
+20260317-20:47:51.203809000 : Created session
+20260317-20:47:54.480879000 : Received logon request
+20260317-20:47:54.481021000 : Responding to logon request
+20260317-20:47:54.481037000 : MsgSeqNum too high, expecting 2844 but received 2845
+20260317-20:47:54.481135000 : Sent ResendRequest FROM: 2844 TO: 0
+20260317-20:47:54.481379000 : ResendRequest for messages FROM: 2844 TO: 2844 has been satisfied.
+20260317-20:47:54.481403000 : Received SequenceReset FROM: 2844 TO: 2846
+20260317-20:50:11.579961000 : Socket Error: Connection reset by peer.
+20260317-20:50:11.580065000 : Disconnecting
+20260317-20:51:18.192856000 : Created session
+20260317-20:51:21.513905000 : Received logon request
+20260317-20:51:21.514072000 : Responding to logon request
+20260317-20:51:21.514080000 : MsgSeqNum too high, expecting 3476 but received 3477
+20260317-20:51:21.514167000 : Sent ResendRequest FROM: 3476 TO: 0
+20260317-20:51:21.514583000 : ResendRequest for messages FROM: 3476 TO: 3476 has been satisfied.
+20260317-20:51:21.514639000 : Received SequenceReset FROM: 3476 TO: 3478
+20260317-20:53:18.200809000 : Socket Error: Connection reset by peer.
+20260317-20:53:18.200963000 : Disconnecting
+20260317-20:53:51.439354000 : Created session
+20260317-20:53:54.777393000 : Received logon request
+20260317-20:53:54.777532000 : Responding to logon request
+20260317-20:53:54.777553000 : MsgSeqNum too high, expecting 4018 but received 4019
+20260317-20:53:54.777638000 : Sent ResendRequest FROM: 4018 TO: 0
+20260317-20:53:54.777870000 : ResendRequest for messages FROM: 4018 TO: 4018 has been satisfied.
+20260317-20:53:54.777900000 : Received SequenceReset FROM: 4018 TO: 4020
+20260317-20:57:11.222334000 : Socket Error: Connection reset by peer.
+20260317-20:57:11.222432000 : Disconnecting
+20260317-20:57:44.739737000 : Created session
+20260317-20:57:47.891289000 : Received logon request
+20260317-20:57:47.891457000 : Responding to logon request
+20260317-20:57:47.891465000 : MsgSeqNum too high, expecting 4920 but received 4921
+20260317-20:57:47.891557000 : Sent ResendRequest FROM: 4920 TO: 0
+20260317-20:57:47.891854000 : ResendRequest for messages FROM: 4920 TO: 4920 has been satisfied.
+20260317-20:57:47.891882000 : Received SequenceReset FROM: 4920 TO: 4922
+20260317-20:59:59.150285000 : Socket Error: Connection reset by peer.
+20260317-20:59:59.150375000 : Disconnecting
+20260317-21:00:49.022117000 : Created session
+20260317-21:00:52.220044000 : Received logon request
+20260317-21:00:52.220199000 : Responding to logon request
+20260317-21:00:52.220207000 : MsgSeqNum too high, expecting 5522 but received 5523
+20260317-21:00:52.220299000 : Sent ResendRequest FROM: 5522 TO: 0
+20260317-21:00:52.220537000 : ResendRequest for messages FROM: 5522 TO: 5522 has been satisfied.
+20260317-21:00:52.220566000 : Received SequenceReset FROM: 5522 TO: 5524
+20260317-21:01:42.368783000 : Socket Error: Connection reset by peer.
+20260317-21:01:42.368918000 : Disconnecting
+20260317-21:05:11.408048000 : Created session
+20260317-21:05:11.991302000 : Received logon request
+20260317-21:05:11.991639000 : Responding to logon request
+20260317-21:05:11.991647000 : MsgSeqNum too high, expecting 5754 but received 5755
+20260317-21:05:11.991745000 : Sent ResendRequest FROM: 5754 TO: 0
+20260317-21:05:11.992446000 : ResendRequest for messages FROM: 5754 TO: 5754 has been satisfied.
+20260317-21:05:11.992480000 : Received SequenceReset FROM: 5754 TO: 5756
+20260317-21:08:22.069445000 : Socket Error: Connection reset by peer.
+20260317-21:08:22.069572000 : Disconnecting
+20260317-21:09:25.796318000 : Created session
+20260317-21:09:29.114367000 : Received logon request
+20260317-21:09:29.114582000 : Responding to logon request
+20260317-21:09:29.114590000 : MsgSeqNum too high, expecting 6626 but received 6627
+20260317-21:09:29.114699000 : Sent ResendRequest FROM: 6626 TO: 0
+20260317-21:09:29.115022000 : ResendRequest for messages FROM: 6626 TO: 6626 has been satisfied.
+20260317-21:09:29.115050000 : Received SequenceReset FROM: 6626 TO: 6628
+20260317-21:09:42.125527000 : Socket Error: Connection reset by peer.
+20260317-21:09:42.125638000 : Disconnecting
+20260317-21:10:10.829266000 : Created session
+20260317-21:10:14.321017000 : Received logon request
+20260317-21:10:14.328209000 : Responding to logon request
+20260317-21:10:14.328232000 : MsgSeqNum too high, expecting 6698 but received 6699
+20260317-21:10:14.328364000 : Sent ResendRequest FROM: 6698 TO: 0
+20260317-21:10:14.328638000 : ResendRequest for messages FROM: 6698 TO: 6698 has been satisfied.
+20260317-21:10:14.328663000 : Received SequenceReset FROM: 6698 TO: 6700
+20260317-21:32:41.639957000 : Socket Error: Connection reset by peer.
+20260317-21:32:41.640527000 : Disconnecting
+20260317-21:33:55.317146000 : Created session
+20260317-21:33:58.155989000 : Received logon request
+20260317-21:33:58.156483000 : Responding to logon request
+20260317-21:33:58.156492000 : MsgSeqNum too high, expecting 12750 but received 12751
+20260317-21:33:58.156571000 : Sent ResendRequest FROM: 12750 TO: 0
+20260317-21:33:58.157163000 : ResendRequest for messages FROM: 12750 TO: 12750 has been satisfied.
+20260317-21:33:58.157190000 : Received SequenceReset FROM: 12750 TO: 12752
+20260317-21:37:43.171928000 : Socket Error: Connection reset by peer.
+20260317-21:37:43.172034000 : Disconnecting
+20260317-21:38:34.537048000 : Created session
+20260317-21:38:37.908592000 : Received logon request
+20260317-21:38:37.908730000 : Responding to logon request
+20260317-21:38:37.908739000 : MsgSeqNum too high, expecting 13762 but received 13763
+20260317-21:38:37.908818000 : Sent ResendRequest FROM: 13762 TO: 0
+20260317-21:38:37.909071000 : ResendRequest for messages FROM: 13762 TO: 13762 has been satisfied.
+20260317-21:38:37.909100000 : Received SequenceReset FROM: 13762 TO: 13764
+20260317-21:45:24.575841000 : Socket Error: Connection reset by peer.
+20260317-21:45:24.576005000 : Disconnecting

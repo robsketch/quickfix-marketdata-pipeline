@@ -1,0 +1,20 @@
+---
+networks:
+  kx:
+    name: kx
+    external: true
+
+services:
+  custom-api:
+    build:
+      context: .
+      args:
+        INDEX_URL: ${kxi_index_url}
+    networks: [kx]
+    environment:
+      - QLIC=/opt/kx/lic
+      - RT_LOG_PATH=/mnt/logs/taxi-pub
+    volumes:
+      - ${kxi_dir_db}:/mnt/db
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ${kxi_dir_logs}:/mnt/logs

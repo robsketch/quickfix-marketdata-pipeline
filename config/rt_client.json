@@ -1,0 +1,15 @@
+{
+  "push": [
+    {
+      "host": "rt-data-0",
+      "port": 5002
+    }
+  ],
+  "repl": [
+    {
+      "host": "rt-data-0",
+      "port": 5002
+    }
+  ],
+  "stream": "rt-data"
+}

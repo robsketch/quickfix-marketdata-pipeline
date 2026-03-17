@@ -1,0 +1,15 @@
+{
+    "name": "rtpy_test",
+    "useSslRt": false,
+    "topics": {
+      "insert": "rtpy",
+      "query": "requests"
+    },
+    "insert": {
+      "insert": [
+        ":rt-data-0:5002"
+      ],
+      "query": []
+    },
+    "query": []
+  }

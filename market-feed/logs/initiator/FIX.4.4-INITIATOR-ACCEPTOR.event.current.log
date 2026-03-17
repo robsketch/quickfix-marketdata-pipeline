@@ -1,0 +1,13 @@
+20260317-19:22:36.807540000 : Created session
+20260317-19:22:36.808640000 : Connecting to acceptor on port 5001 (Source :0)
+20260317-19:22:49.761183000 : Initiated logon request
+20260317-19:22:49.761217000 : Socket Error: Transport endpoint is not connected
+20260317-19:22:49.761224000 : Disconnecting
+20260317-19:22:54.749003000 : Connecting to acceptor on port 5001 (Source :0)
+20260317-19:23:04.759545000 : Initiated logon request
+20260317-19:23:04.759577000 : Socket Error: Transport endpoint is not connected
+20260317-19:23:04.759582000 : Disconnecting
+20260317-19:23:09.737205000 : Connecting to acceptor on port 5001 (Source :0)
+20260317-19:23:22.674796000 : Initiated logon request
+20260317-19:23:22.674828000 : Socket Error: Transport endpoint is not connected
+20260317-19:23:22.674834000 : Disconnecting

@@ -1,0 +1,17 @@
+---
+networks:
+  kx:
+    name: kx
+    external: true
+
+services:
+  publish:
+    build:
+      context: .
+      args:
+        INDEX_URL: ${kxi_index_url}
+    networks: [kx]
+    environment:
+      - RT_LOG_PATH=/mnt/logs/taxi-pub
+    volumes:
+      - ${kxi_dir_logs}:/mnt/logs

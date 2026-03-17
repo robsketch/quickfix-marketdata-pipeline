@@ -1,0 +1,10 @@
+---
+networks:
+  kx:
+    name: kx
+    external: true
+
+services:
+  query:
+    build: .
+    networks: [kx]

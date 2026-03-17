@@ -1,0 +1,69 @@
+---
+networks:
+  kx:
+    name: kx
+    driver: bridge
+
+services:
+  rc-sidecar:
+    image: ${kxi_sidecar}
+    environment:
+      - KXI_CONFIG_FILE=/metrics-cfg/rc-config.json
+      - KXI_LOG_CONFIG=/metrics-cfg/qlog.json
+    volumes:
+      - ${kxi_dir_sidecar_cfg}:/metrics-cfg/
+      - ${kxi_dir_lic}:/opt/kx/lic
+    command: -p 8080
+    networks: [kx]
+  sm-sidecar:
+    image: ${kxi_sidecar}
+    environment:
+      - KXI_CONFIG_FILE=/metrics-cfg/sm-config.json
+      - KXI_LOG_CONFIG=/metrics-cfg/qlog.json
+    volumes:
+      - ${kxi_dir_sidecar_cfg}:/metrics-cfg/
+      - ${kxi_dir_lic}:/opt/kx/lic
+    command: -p 8080
+    networks: [kx]
+  rt-sidecar:
+    image: ${kxi_sidecar}
+    environment:
+      - KXI_CONFIG_FILE=/metrics-cfg/rt-config.json
+      - KXI_LOG_CONFIG=/metrics-cfg/qlog.json
+    volumes:
+      - ${kxi_dir_sidecar_cfg}:/metrics-cfg/
+      - ${kxi_dir_lic}:/opt/kx/lic
+    command: -p 8080
+    networks: [kx]
+  agg-sidecar:
+    image: ${kxi_sidecar}
+    environment:
+      - KXI_CONFIG_FILE=/metrics-cfg/agg-config.json
+      - KXI_LOG_CONFIG=/metrics-cfg/qlog.json
+    volumes:
+      - ${kxi_dir_sidecar_cfg}:/metrics-cfg/
+      - ${kxi_dir_lic}:/opt/kx/lic
+    command: -p 8080
+    networks: [kx]
+  # https://prometheus.io/docs/prometheus/latest/installation/
+  prometheus:
+    hostname: promstats
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    networks: [kx]
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    networks: [kx]
+    environment:
+      # - GF_SECURITY_ADMIN_USER=admin
+      # - GF_SECURITY_ADMIN_PASSWORD=grafana
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/ingest.json
+    volumes:
+      - ./grafana-cfg/grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana-cfg/grafana/dashboards:/var/lib/grafana/dashboards

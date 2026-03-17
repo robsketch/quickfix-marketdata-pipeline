@@ -1,0 +1,15 @@
+---
+networks:
+  kx:
+    name: kx
+    external: true
+
+services:
+  batch-ingest:
+    build: .
+    networks: [kx]
+    environment:
+      - QLIC=/opt/kx/lic
+    volumes:
+      - ${kxi_dir_db}:/mnt/db
+      - ${kxi_dir_lic}:/opt/kx/lic

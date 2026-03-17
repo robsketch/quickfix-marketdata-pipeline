@@ -1,0 +1,224 @@
+---
+networks:
+  kx:
+    name: kx
+    driver: bridge
+
+services:
+  kxi-rc:
+    image: ${kxi_img_rc}
+    hostname: kxi-rc
+    environment:
+      - KXI_NAME=kxi-rc
+      - KXI_PORT=${kxi_port_rc}
+      - KXI_LOG_FORMAT=${kxi_log_format}
+      - KXI_LOG_LEVELS=default:${kxi_log_level}
+      - KXI_ALLOWED_SBX_APIS=${kxi_apis}
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_lic}:/opt/kx/lic
+
+  kxi-agg:
+    image: ${kxi_img_agg}
+    environment:
+      - KXI_NAME=kxi-agg
+      - KXI_PORT=${kxi_port_agg}
+      - KXI_SG_RC_ADDR=kxi-rc:${kxi_port_rc}
+      - KXI_CUSTOM_FILE=/mnt/config/src/agg/custom.q  # Optional for custom APIs
+      - KXI_LOG_FORMAT=${kxi_log_format}
+      - KXI_LOG_LEVELS=default:${kxi_log_level}
+      - KXI_PACKAGES=custom:1.0.0
+      - KX_PACKAGE_PATH=/opt/kx/packages/
+    deploy:  # Optional: deploy multiple replicas.
+      mode: replicated
+      replicas: 1
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_config}:/mnt/config
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ${kxi_dir_pkgs}:/opt/kx/packages
+
+  kxi-gw:
+    image: ${kxi_img_gw}
+    hostname: kxi-gw
+    environment:
+      - KXI_SG_METRICS_ENABLED=false
+      - KXI_SG_METRICS_PORT=81
+      - GATEWAY_QIPC_PORT=${kxi_port_gw_qipc}
+      - GATEWAY_HTTP_PORT=${kxi_port_gw_http}
+      - KXI_SG_RC_ADDR=kxi-rc:${kxi_port_rc}
+      - KXI_LOG_FORMAT=${kxi_log_format}
+      - KXI_LOG_LEVELS=default:${kxi_log_level}
+      - KXI_SCOPE_AFFINITY=soft
+    ports:
+      - ${kxi_port_gw_qipc}:${kxi_port_gw_qipc}
+      - ${kxi_port_gw_http}:${kxi_port_gw_http}
+    deploy:  # Optional: deploy multiple replicas.
+      mode: replicated
+      replicas: 1
+    networks: [kx]
+
+  kxi-da:
+    hostname: kxi-da
+    image: ${kxi_img_da}
+    environment:
+      - KXI_NAME=kxi-da
+      - KXI_SC=dap
+      - KXI_PORT=${kxi_port_da}
+      - KXI_ASSEMBLY_FILE=/mnt/config/assembly.yaml
+      - KXI_SG_RC_ADDR=kxi-rc:${kxi_port_rc}
+      - KXI_SM_ADDR=kxi-sm:${kxi_port_sm}
+      - KXI_CUSTOM_FILE=/mnt/config/src/da/custom.q  # Optional for custom APIs
+      - KXI_LOG_FORMAT=${kxi_log_format}
+      - KXI_LOG_LEVELS=default:${kxi_log_level}
+      - KXI_ALLOWED_SBX_APIS=${kxi_apis}
+      - RT_LOG_PATH=/mnt/logs/da
+      - RT_TOPIC_PREFIX=rt-
+      - RT_REPLICAS=1
+      - KXI_SECURE_ENABLED=0
+      - KXI_LATE_DATA=true
+      # Optional for gathering metrics
+      - KXI_CONFIG_FILE=/metrics-cfg/da-config.json
+      # Optional for gathering metrics
+      - KXI_DA_START_SIDECARS=false
+      - KXI_PACKAGES=custom:1.0.0
+      - KX_PACKAGE_PATH=/opt/kx/packages
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_config}:/mnt/config
+      - ${kxi_dir_db}:/mnt/db
+      - ${kxi_dir_logs}:/mnt/logs
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ${kxi_dir_sidecar_cfg}:/metrics-cfg/  # Optional for gathering metics
+      - ${kxi_dir_pkgs}:/opt/kx/packages
+
+  kxi-sm:
+    hostname: kxi-sm
+    image: ${kxi_img_sm}
+    command: -p 20001
+    environment:
+      - KXI_NAME=kxi-sm
+      - KXI_SC=sm
+      - KXI_PORT=${kxi_port_sm}
+      - KXI_ASSEMBLY_FILE=/mnt/config/assembly.yaml
+      - KXI_LOG_FORMAT=${kxi_log_format}
+      - KXI_LOG_LEVELS=default:${kxi_log_level}
+      - KXI_RT_SM_LOG_PATH=/mnt/logs/sm
+      - KXI_RT_EOI_LOG_PATH=/mnt/logs/eoi
+      - KXI_CONFIG_FILE=/mnt/config/metrics-cfg/sm-config.json
+      - RT_TOPIC_PREFIX=rt-
+      - RT_REPLICAS=1
+      - KXI_LATE_DATA=true
+    ports:
+      - ${kxi_port_sm}:${kxi_port_sm}
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_db}:/mnt/db
+      - ${kxi_dir_logs}:/mnt/logs
+      - ${kxi_dir_config}:/mnt/config
+      - ${kxi_dir_lic}:/opt/kx/lic
+
+  kxi-rt:
+    image: ${kxi_img_rt}
+    # Need to set hostname so rt nodes/publishers/subcribers can find each other
+    hostname: rt-data-0
+    command: [
+      '-p', '${kxi_port_rt}', '-in', '/s/in', '-out', '/s/out', '-cp',
+      '/s/state', '-size', '${kxi_rt_replicas}', '-limit', '${kxi_rt_limit}',
+      '-time', '${kxi_rt_time}', '-disk', '${kxi_rt_disk}'
+    ]
+    environment:
+      - RT_EXPORT_METRIC="0"
+      - RT_TOPIC_PREFIX=rt-
+      - RT_EXTERN_PREFIX=rt-
+      - RT_SINK=data
+      - RT_STREAM=data
+      - RT_LOGLEVEL_CONSOLE=${kxi_log_level}
+      - RT_QURAFT_LOG_LEVEL=${kxi_log_level}
+      - RT_SEQ_SESSION_PATH=/s/session
+      - RT_LOG_LEADER=
+      - RAFT_HEARTBEAT=${kxi_rt_heartbeat}
+      - RAFT_LOG_SIZE=${kxi_rt_log_size}
+      - RAFT_CHUNK_SIZE=${kxi_rt_chunk_size}
+    ports:
+      - ${kxi_port_rt_push_rep}:${kxi_port_rt_push_rep}
+    restart: unless-stopped
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_logs_rt}:/s
+      - ${kxi_dir_lic}:/opt/kx/lic
+
+  kxi-spc:
+    hostname: kxi-spc
+    image: ${kxi_img_spc}
+    command: ["-p", '${kxi_port_spc}']
+    environment:
+      - KXI_NAME=kxi-spc
+      - KXI_PORT=${kxi_port_spc}
+      - KXI_SP_SILENCE_CHECKPOINTS=true        # disable checkpointing
+      - KXI_SP_CHECKPOINT_FREQ=0               # disable checkpointing
+    ports:
+      - ${kxi_port_spc}:${kxi_port_spc}
+    networks: [kx]
+    volumes:
+      - ${kxi_dir_logs}:/mnt/logs
+      - ${kxi_dir_sp}:/sp
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ${kxi_dir_config}:/mnt/config
+
+  kxi-spw:
+    hostname: kxi-sp
+    image: ${kxi_img_spw}
+    command: ["-p", '${kxi_port_spw}']
+    ports:
+      - ${kxi_port_spw}:${kxi_port_spw}
+    networks: [kx]
+    environment:
+      - KXI_NAME=kxi-spw
+      - KXI_PORT=${kxi_port_spw}
+      - KXI_SP_SPEC=/mnt/config/src/trade_spec.q   # Point to the bound spec.q file
+      - KXI_SP_PARENT_HOST=kxi-spc:${kxi_port_spc}     # Point to the parent Controller
+      - KXI_SP_DATABASE_HOST=kxi-gw:${kxi_port_gw_qipc}
+      - RT_TOPIC_PREFIX=rt-
+      - RT_REPLICAS=1
+      - KXI_SP_SILENCE_CHECKPOINTS=true        # disable checkpointing
+      - KXI_SP_CHECKPOINT_FREQ=0               # disable checkpointing
+    volumes:
+      - ${kxi_dir_logs}:/mnt/logs
+      - ${kxi_dir_sp}:/sp
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ${kxi_dir_config}:/mnt/config
+      - ${kxi_dir_db}:/mnt/db
+
+  fix-acceptor:
+    build:
+      context: ./fix-market-feed
+      dockerfile: acceptor/Dockerfile
+    container_name: fix-acceptor
+    hostname: fix-acceptor
+    environment:
+      - RT_ENABLED=true
+      - QLIC=/opt/kx/lic
+    networks: [kx]
+    ports:
+      - "5001:5001"
+    volumes:
+      - ${kxi_dir_lic}:/opt/kx/lic
+      - ./market-feed/logs/acceptor:/app/logs
+      - ./fix-market-feed/config/rt_client.json:/app/config/rt_client.json:ro
+    restart: unless-stopped
+    depends_on:
+      - kxi-rt
+
+  fix-initiator:
+    build:
+      context: ./fix-market-feed
+      dockerfile: initiator/Dockerfile
+    container_name: fix-initiator
+    hostname: fix-initiator
+    networks: [kx]
+    volumes:
+      - ./fix-market-feed/logs/initiator:/app/logs
+    restart: unless-stopped
+    depends_on:
+      - fix-acceptor
