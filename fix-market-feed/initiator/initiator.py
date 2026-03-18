@@ -129,11 +129,11 @@ class MarketDataInitiator(fix.Application):
                     try:
                         quote = self.build_quote(symbol)
                         fix.Session.sendToTarget(quote, self.session_id)
-                        logger.info(f"Sent QUOTE for {symbol}")
+                        logger.info(f"Sent QUOTE for {symbol}: {quote.toString().replace(chr(1), '|')}")
 
                         trade = self.build_trade(symbol)
                         fix.Session.sendToTarget(trade, self.session_id)
-                        logger.info(f"Sent TRADE for {symbol}")
+                        logger.info(f"Sent TRADE for {symbol}: {trade.toString().replace(chr(1), '|')}")
 
                     except fix.SessionNotFound as e:
                         logger.warning(f"Session not found: {e}")

@@ -131,11 +131,7 @@ def main():
     config_file = "/app/config/acceptor.cfg"
 
     if RT_ENABLED:
-        # RT connection params — host/port/stream read from environment variables
-        # so they can be overridden in docker-compose without rebuilding the image.
-        rt_host   = os.environ.get("RT_HOST",   "rt-data-0")
-        rt_port   = int(os.environ.get("RT_PORT",   "5002"))
-        rt_stream = os.environ.get("RT_STREAM", "rt-data")
+        # RT connection params — host/port/stream read cfg
 
         rt_params = RTParams(
             config_url='file:///app/config/rt_client.json',
