@@ -6,3 +6,17 @@ java-pub/repdir
 !.gitignore
 
 ./prometheus-config.yml
+
+fix-market-feed/logs/initiator/FIX.4.4-INITIATOR-ACCEPTOR.event.current.log
+fix-market-feed/logs/initiator/FIX.4.4-INITIATOR-ACCEPTOR.messages.current.log
+fix-market-feed/logs/initiator/store/FIX.4.4-INITIATOR-ACCEPTOR.body
+fix-market-feed/logs/initiator/store/FIX.4.4-INITIATOR-ACCEPTOR.header
+fix-market-feed/logs/initiator/store/FIX.4.4-INITIATOR-ACCEPTOR.seqnums
+fix-market-feed/logs/initiator/store/FIX.4.4-INITIATOR-ACCEPTOR.session
+market-feed/logs/acceptor/FIX.4.4-ACCEPTOR-INITIATOR.event.current.log
+market-feed/logs/acceptor/FIX.4.4-ACCEPTOR-INITIATOR.messages.current.log
+market-feed/logs/acceptor/GLOBAL.event.current.log
+market-feed/logs/acceptor/store/FIX.4.4-ACCEPTOR-INITIATOR.body
+market-feed/logs/acceptor/store/FIX.4.4-ACCEPTOR-INITIATOR.header
+market-feed/logs/acceptor/store/FIX.4.4-ACCEPTOR-INITIATOR.seqnums
+market-feed/logs/acceptor/store/FIX.4.4-ACCEPTOR-INITIATOR.session
