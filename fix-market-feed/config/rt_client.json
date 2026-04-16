@@ -1,9 +1,9 @@
 {
-    "name": "rtpy_test",
+    "name": "marketdatafeed",
     "useSslRt": false,
     "topics": {
-      "insert": "rtpy",
-      "query": "requests"
+      "insert": "data",
+      "query": ""
     },
     "insert": {
       "insert": [

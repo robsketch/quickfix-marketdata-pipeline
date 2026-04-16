@@ -92,12 +92,16 @@ class MarketDataAcceptor(fix.Application):
 
         if self.pub is not None:
             data = kx.Table(
-                [[kx.TimestampAtom(now), symbol.getValue(), bidPx.getValue(),
-                  offerPx.getValue(), bidSize.getValue(), offerSize.getValue()]],
+                [[kx.TimestampAtom(now), 
+                  symbol.getValue(), 
+                  bidPx.getValue(),
+                  offerPx.getValue(), 
+                  bidSize.getValue(), 
+                  offerSize.getValue()]],
                 columns=['time', 'sym', 'bid', 'ask', 'bsize', 'asize']
             )
             self.pub("quote", data)
-            logger.info("[QUOTE] Published to RT stream 'quote'")
+            logger.info("[QUOTE] Published to RT stream topic 'quote'")
 
     # ------------------------------------------------------------------
     # Trade (AE) -> RT stream "trade"
@@ -119,12 +123,15 @@ class MarketDataAcceptor(fix.Application):
 
         if self.pub is not None:
             data = kx.Table(
-                [[kx.TimestampAtom(now), symbol.getValue(), side_str,
-                  lastPx.getValue(), lastQty.getValue()]],
+                [[kx.TimestampAtom(now), 
+                  symbol.getValue(), 
+                  side_str,
+                  lastPx.getValue(), 
+                  lastQty.getValue()]],
                 columns=['time', 'sym', 'side', 'price', 'size']
             )
-            self.pub("trade", data)
-            logger.info("[TRADE] Published to RT stream 'trade'")
+            self.pub("rawTrade", data)
+            logger.info("[TRADE] Published to RT stream topic 'trade'")
 
 
 def main():
@@ -138,15 +145,11 @@ def main():
             rt_dir='/tmp/rt'
         )
 
-        # Write rt_client.json from env vars using the format required by the KDB Insights SDK.
-        # Per the docs, the config file must use "insert" for the RT endpoint and "useSslRt": false
-        # when connecting from inside the cluster without TLS.
-        logger.info(f"Connecting to RT at {rt_host}:{rt_port} stream={rt_stream}")
-        # Publisher opened once for the lifetime of the process;
-        # cleanly disconnected when the with-block exits.
         with Publisher(rt_params) as pub:
+            logger.info(f"Connecting to RT")
             _run_acceptor(config_file, rt_publisher=pub)
     else:
+        logger.info(f"Starting acceptor in log-only mode (RT publishing disabled)")
         _run_acceptor(config_file, rt_publisher=None)
 
 

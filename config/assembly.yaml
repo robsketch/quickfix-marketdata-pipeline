@@ -9,35 +9,39 @@ tables:
     prtnCol: time
     sortColsDisk: [sym]
     columns:
+      - name: time
+        type: timestamp
+      - name: spTime
+        type: timestamp  
       - name: sym
         type: symbol
         attrDisk: parted
-      - name: time
-        type: timestamp
-      - name: px
-        type: float
-      - name: qty
-        type: float
       - name: side
         type: symbol
-  quote:
+      - name: price
+        type: float
+      - name: size
+        type: float
+  ohlc:
     type: partitioned
     prtnCol: time
     sortColsDisk: [sym]
     columns:
-      - name: sym
-        type: symbol
-        attrDisk: parted
       - name: time
         type: timestamp
-      - name: bid
+      - name: sym
+        type: symbol
+        attrDisk: parted  
+      - name: high
         type: float
-      - name: bsize
+      - name: low
         type: float
-      - name: ask
+      - name: open
         type: float
-      - name: asize
+      - name: close
         type: float
+      - name: volume
+        type: float  
 
 bus:
   stream:
