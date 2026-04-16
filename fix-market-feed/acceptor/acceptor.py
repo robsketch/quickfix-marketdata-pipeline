@@ -3,7 +3,7 @@ import logging
 import sys
 import time
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 logging.basicConfig(
     level=logging.INFO,
@@ -76,13 +76,17 @@ class MarketDataAcceptor(fix.Application):
     # ------------------------------------------------------------------
 
     def _parse_quote(self, message):
-        symbol    = fix.Symbol();    message.getField(symbol)
-        bidPx     = fix.BidPx();     message.getField(bidPx)
-        offerPx   = fix.OfferPx();   message.getField(offerPx)
-        bidSize   = fix.BidSize();   message.getField(bidSize)
-        offerSize = fix.OfferSize(); message.getField(offerSize)
+        try:
+            symbol    = fix.Symbol();    message.getField(symbol)
+            bidPx     = fix.BidPx();     message.getField(bidPx)
+            offerPx   = fix.OfferPx();   message.getField(offerPx)
+            bidSize   = fix.BidSize();   message.getField(bidSize)
+            offerSize = fix.OfferSize(); message.getField(offerSize)
+        except fix.FieldNotFound as e:
+            logger.error(f"[QUOTE] Missing required field — dropping message: {e}")
+            return
 
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         logger.info(
             f"[QUOTE] sym={symbol.getValue()} time={now.isoformat()} "
@@ -91,29 +95,36 @@ class MarketDataAcceptor(fix.Application):
         )
 
         if self.pub is not None:
-            data = kx.Table(
-                [[kx.TimestampAtom(now), 
-                  symbol.getValue(), 
-                  bidPx.getValue(),
-                  offerPx.getValue(), 
-                  bidSize.getValue(), 
-                  offerSize.getValue()]],
-                columns=['time', 'sym', 'bid', 'ask', 'bsize', 'asize']
-            )
-            self.pub("quote", data)
-            logger.info("[QUOTE] Published to RT stream topic 'quote'")
+            try:
+                data = kx.Table(
+                    [[kx.TimestampAtom(now),
+                      symbol.getValue(),
+                      bidPx.getValue(),
+                      offerPx.getValue(),
+                      bidSize.getValue(),
+                      offerSize.getValue()]],
+                    columns=['time', 'sym', 'bid', 'ask', 'bsize', 'asize']
+                )
+                self.pub("quote", data)
+                logger.info("[QUOTE] Published to RT stream topic 'quote'")
+            except Exception as e:
+                logger.error(f"[QUOTE] RT publish failed — message dropped: {e}")
 
     # ------------------------------------------------------------------
-    # Trade (AE) -> RT stream "trade"
+    # Trade (AE) -> RT stream "rawTrade"
     # ------------------------------------------------------------------
 
     def _parse_trade(self, message):
-        symbol  = fix.Symbol();   message.getField(symbol)
-        lastPx  = fix.LastPx();   message.getField(lastPx)
-        lastQty = fix.LastQty();  message.getField(lastQty)
-        side    = fix.Side();     message.getField(side)
+        try:
+            symbol  = fix.Symbol();   message.getField(symbol)
+            lastPx  = fix.LastPx();   message.getField(lastPx)
+            lastQty = fix.LastQty();  message.getField(lastQty)
+            side    = fix.Side();     message.getField(side)
+        except fix.FieldNotFound as e:
+            logger.error(f"[TRADE] Missing required field — dropping message: {e}")
+            return
 
-        now      = datetime.utcnow()
+        now      = datetime.now(timezone.utc)
         side_str = "buy" if side.getValue() == fix.Side_BUY else "sell"
 
         logger.info(
@@ -122,38 +133,46 @@ class MarketDataAcceptor(fix.Application):
         )
 
         if self.pub is not None:
-            data = kx.Table(
-                [[kx.TimestampAtom(now), 
-                  symbol.getValue(), 
-                  side_str,
-                  lastPx.getValue(), 
-                  lastQty.getValue()]],
-                columns=['time', 'sym', 'side', 'price', 'size']
-            )
-            self.pub("rawTrade", data)
-            logger.info("[TRADE] Published to RT stream topic 'trade'")
+            try:
+                data = kx.Table(
+                    [[kx.TimestampAtom(now),
+                      symbol.getValue(),
+                      side_str,
+                      lastPx.getValue(),
+                      lastQty.getValue()]],
+                    columns=['time', 'sym', 'side', 'price', 'size']
+                )
+                self.pub("rawTrade", data)
+                logger.info("[TRADE] Published to RT stream topic 'rawTrade'")
+            except Exception as e:
+                logger.error(f"[TRADE] RT publish failed — message dropped: {e}")
 
 
 def main():
-    config_file = "/app/config/acceptor.cfg"
+    config_file     = os.environ.get("FIX_CONFIG_FILE", "/app/config/acceptor.cfg")
+    rt_config_file  = os.environ.get("RT_CONFIG_FILE",  "/app/config/rt_client.json")
+    rt_state_dir    = os.environ.get("RT_STATE_DIR",    "/tmp/rt")
 
     if RT_ENABLED:
-        # RT connection params — host/port/stream read cfg
+        if not os.path.exists(rt_config_file):
+            logger.error(f"RT config not found: {rt_config_file} (set RT_CONFIG_FILE env var to override)")
+            sys.exit(1)
 
         rt_params = RTParams(
-            config_url='file:///app/config/rt_client.json',
-            rt_dir='/tmp/rt'
+            config_url=f"file://{rt_config_file}",
+            rt_dir=rt_state_dir
         )
 
         with Publisher(rt_params) as pub:
-            logger.info(f"Connecting to RT")
+            logger.info("Connecting to RT")
             _run_acceptor(config_file, rt_publisher=pub)
     else:
-        logger.info(f"Starting acceptor in log-only mode (RT publishing disabled)")
+        logger.info("Starting acceptor in log-only mode (RT publishing disabled)")
         _run_acceptor(config_file, rt_publisher=None)
 
 
 def _run_acceptor(config_file: str, rt_publisher):
+    acceptor = None
     try:
         settings     = fix.SessionSettings(config_file)
         application  = MarketDataAcceptor(rt_publisher)
@@ -172,7 +191,9 @@ def _run_acceptor(config_file: str, rt_publisher):
         sys.exit(1)
     except KeyboardInterrupt:
         logger.info("Shutting down acceptor...")
-        acceptor.stop()
+    finally:
+        if acceptor is not None:
+            acceptor.stop()
 
 
 if __name__ == "__main__":

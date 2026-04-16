@@ -1,11 +1,10 @@
 import quickfix as fix
-import quickfix44 as fix44
 import logging
 import sys
 import time
 import random
 import uuid
-from datetime import datetime
+import os
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,7 +25,8 @@ BASE_PRICES = {
     "TSLA":  175.0,
 }
 
-PUBLISH_INTERVAL_SECS = 2   # how often to send a batch of messages
+PUBLISH_INTERVAL_SECS = 2    # how often to send a batch of messages
+LOGON_TIMEOUT_SECS    = 30   # max time to wait for FIX session logon
 
 
 class MarketDataInitiator(fix.Application):
@@ -68,9 +68,9 @@ class MarketDataInitiator(fix.Application):
     # ------------------------------------------------------------------
 
     def _tick_price(self, symbol: str) -> float:
-        """Random-walk the mid price."""
+        """Random-walk the mid price, clamped to a minimum of 0.01."""
         change = self.prices[symbol] * random.uniform(-0.002, 0.002)
-        self.prices[symbol] = round(self.prices[symbol] + change, 4)
+        self.prices[symbol] = max(0.01, round(self.prices[symbol] + change, 4))
         return self.prices[symbol]
 
     def build_quote(self, symbol: str) -> fix.Message:
@@ -121,6 +121,18 @@ class MarketDataInitiator(fix.Application):
     # Publishing loop
     # ------------------------------------------------------------------
 
+    def wait_for_logon(self, timeout: int = LOGON_TIMEOUT_SECS) -> bool:
+        """Block until the FIX session logs on, or timeout expires. Returns True on success."""
+        deadline = time.time() + timeout
+        while not self.session_id:
+            if time.time() >= deadline:
+                logger.error(f"Session logon timed out after {timeout}s")
+                return False
+            logger.info("Waiting for session logon...")
+            time.sleep(1)
+        logger.info(f"Session established: {self.session_id}")
+        return True
+
     def publish_loop(self):
         """Called from main after logon is confirmed."""
         while True:
@@ -137,14 +149,17 @@ class MarketDataInitiator(fix.Application):
 
                     except fix.SessionNotFound as e:
                         logger.warning(f"Session not found: {e}")
+                    except Exception as e:
+                        logger.error(f"Unexpected error sending message for {symbol}: {e}")
             else:
-                logger.info("Waiting for session logon...")
+                logger.info("Session dropped — waiting for reconnect...")
 
             time.sleep(PUBLISH_INTERVAL_SECS)
 
 
 def main():
-    config_file = "/app/config/initiator.cfg"
+    config_file = os.environ.get("FIX_CONFIG_FILE", "/app/config/initiator.cfg")
+    initiator   = None
     try:
         settings     = fix.SessionSettings(config_file)
         application  = MarketDataInitiator()
@@ -155,8 +170,9 @@ def main():
         logger.info("Starting FIX initiator...")
         initiator.start()
 
-        # Give the session a moment to establish before publishing
-        time.sleep(3)
+        if not application.wait_for_logon():
+            sys.exit(1)
+
         application.publish_loop()
 
     except (fix.ConfigError, fix.RuntimeError) as e:
@@ -164,7 +180,9 @@ def main():
         sys.exit(1)
     except KeyboardInterrupt:
         logger.info("Shutting down initiator...")
-        initiator.stop()
+    finally:
+        if initiator is not None:
+            initiator.stop()
 
 
 if __name__ == "__main__":
